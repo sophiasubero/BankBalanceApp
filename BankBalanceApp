@@ -1,0 +1,95 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+class BankAccount {
+    private double balance;
+
+    public BankAccount(double initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+
+    public void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+        }
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+}
+
+public class BankBalanceApp extends JFrame implements ActionListener {
+    private BankAccount account;
+    private JTextField balanceField;
+    private JTextField amountField;
+    private JButton depositButton;
+    private JButton withdrawButton;
+    private JButton exitButton;
+
+    public BankBalanceApp() {
+        account = new BankAccount(0);  // Initial balance set to 0
+
+        // Set up frame
+        setTitle("Bank Balance Application");
+        setSize(300, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Create panel and components
+        JPanel panel = new JPanel();
+        balanceField = new JTextField("Balance: $" + account.getBalance(), 15);
+        balanceField.setEditable(false);
+        amountField = new JTextField(15);
+        depositButton = new JButton("Deposit");
+        withdrawButton = new JButton("Withdraw");
+        exitButton = new JButton("Exit");
+
+        // Add components to panel
+        panel.add(new JLabel("Amount:"));
+        panel.add(amountField);
+        panel.add(depositButton);
+        panel.add(withdrawButton);
+        panel.add(exitButton);
+        panel.add(balanceField);
+
+        // Add action listeners
+        depositButton.addActionListener(this);
+        withdrawButton.addActionListener(this);
+        exitButton.addActionListener(this);
+
+        // Add panel to frame
+        add(panel);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        try {
+            double amount = Double.parseDouble(amountField.getText());
+            if (e.getSource() == depositButton) {
+                account.deposit(amount);
+            } else if (e.getSource() == withdrawButton) {
+                account.withdraw(amount);
+            } else if (e.getSource() == exitButton) {
+                JOptionPane.showMessageDialog(this, "Final Balance: $" + account.getBalance());
+                System.exit(0);
+            }
+            balanceField.setText("Balance: $" + account.getBalance());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid amount.");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            BankBalanceApp app = new BankBalanceApp();
+            app.setVisible(true);
+        });
+    }
+}
